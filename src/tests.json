@@ -1,0 +1,44 @@
+[
+  {
+    "_id": "d29fce6cd8671968bb8bf1a4",
+    "status": "completed",
+    "active_request": "false",
+    "conversation": [
+      {
+        "message_type": "workflow",
+        "generation_steps": {
+          "planning": {
+            "step_type": "planning",
+            "content": "<div><pre>{'workflow': [{'name': 'binding_site_prediction', 'tool': 'fpocket', 'inputs': {'pdb_path': 'users_test/68d2829f3b82a42c003608fc/undefined/5fto_sm_processed.pdb'}}]}</pre></div>"
+          },
+          "code_generation": {
+            "step_type": "code_generation",
+            "content": "<div><pre>import json\nfrom pathlib import Path\nimport time\n\nworking_dir = Path(\"./workflows/sample_test\")\nworking_dir.mkdir(parents=True, exist_ok=True)\nworkflow_result = {}\n\n# Tool 1: Binding Site Prediction using fpocket\ntool_description = \"Predicts the possible druggable binding pockets within a given protein file using fpocket algorithm\"\njob_name = \"Binding_Site_Prediction\"\nexperiment_name = \"fpocket\"\n\n# Log workflow update before tool execution\nlog_workflow_update(\n    description=tool_description,\n    message_type=\"workflow\", \n    status=\"pending\",\n    step_type=experiment_name,\n    collection_name=job_name,\n    experiment_id=\"\",\n    final_status=\"pending\"\n)\n\n# Prepare experiment data for fpocket\nexperiment_data = {\n    \"pdb_path\": \"users_test/68d2829f3b82a42c003608fc/undefined/5fto_sm_processed.pdb\"\n}\n\n# Submit the fpocket job\ndoc_id = submit_request(experiment_data, job_name, experiment_name)\n\n# Fetch status and wait for completion\nresult = fetch_status(job_name, doc_id, watch_time=20)\n\nif result != \"failed to generate output\":\n    # Download the results\n    download_urls = [result['OutputData']['default_pocket']['download_link']]\n    downloaded_files = download_from_signed_url(download_urls, str(working_dir / \"fpocket_results\"))\n\n    # Store result in workflow_result\n    workflow_result['binding_site_prediction'] = {\n        'doc_id': doc_id,\n        'status': result['status'],\n        'output_data': result['OutputData'],\n        'local_files': downloaded_files['output_paths']\n    }\n\n    # Log workflow update after successful tool execution\n    log_workflow_update(\n        description=tool_description,\n        message_type=\"workflow\",\n        status=\"completed\", \n        step_type=experiment_name,\n        collection_name=job_name,\n        experiment_id=doc_id,\n        final_status=\"completed\"\n    )\nelse:\n    # Log workflow update for failed execution\n    log_workflow_update(\n        description=f\"{tool_description} - Failed\",\n        message_type=\"workflow\",\n        status=\"failed\",\n        step_type=experiment_name, \n        collection_name=job_name,\n        experiment_id=doc_id,\n        final_status=\"failed\"\n    )</pre></div>"
+          },
+          "execution": {
+            "step_type": "execution",
+            "content": "<div><pre>Workflow Planned Successfully...\n\n# Workflow Analysis Report\n\n## Workflow Overview\n**Workflow Name:** Binding Site Prediction\n**Status:** Success\n\n### Tools Used\n- FPocket (Protein Pocket Detection Tool)\n\n### Key Metrics and Insights\n#### Binding Site Coordinates\n- X Coordinate: 12.804171562\n- Y Coordinate: 16.360370636\n- Z Coordinate: 8.348237991\n- Maximum Radius: 37.136 Å\n\n### Output Files\n1. **Pocket Statistics CSV**\n   - Path: `users/68d2829f3b82a42c003608fc/fpocket/6926a7740d852b6a25733ca1/6926a7740d852b6a25733ca1_output_stats.csv`\n   - Accessible via downloadable link\n\n2. **Protein PDB File**\n   - Path: `users/68d2829f3b82a42c003608fc/fpocket/6926a7740d852b6a25733ca1/6926a7740d852b6a25733ca1_protein.pdb`\n   - Accessible via downloadable link\n\n3. **Default Pocket File**\n   - Path: `users/68d2829f3b82a42c003608fc/fpocket/6926a7740d852b6a25733ca1/pockets/pocket1_atm.pdb`\n   - Accessible via downloadable link\n\n### Workflow Insights\n- Successfully identified a potential binding pocket\n- Precise spatial coordinates determined\n- Large binding pocket radius (37.136 Å) suggests potential for multiple ligand interactions\n- Comprehensive output with multiple file formats for further analysis\n\n### Recommended Next Steps\n- Validate binding site predictions\n- Perform molecular docking studies\n- Analyze pocket characteristics in detail using the generated CSV file</pre></div>"
+          }
+        },
+        "message_content": [
+          {
+            "description": "Predicts the possible druggable binding pockets within a given protein file using fpocket algorithm",
+            "collection_name": "Binding_Site_Prediction",
+            "experiment_id": "",
+            "status": "pending",
+            "step_type": "fpocket",
+            "timestamp": "2025-11-26T12:38:35.160610+05:30"
+          },
+          {
+            "description": "Predicts the possible druggable binding pockets within a given protein file using fpocket algorithm",
+            "collection_name": "Binding_Site_Prediction",
+            "experiment_id": "6926a7740d852b6a25733ca1",
+            "status": "completed",
+            "step_type": "fpocket",
+            "timestamp": "2025-11-26T12:39:18.599156+05:30"
+          }
+        ]
+      }
+    ]
+  }
+]
